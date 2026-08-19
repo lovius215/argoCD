@@ -8,12 +8,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/lovius215/argocd.git
+    repoURL: https://github.com/lovius215/argoCD.git
     targetRevision: master
-    path: demo/overlays/staging
+    path: demo/staging
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: staging
   syncPolicy:
     automated:
       prune: true

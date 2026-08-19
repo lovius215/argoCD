@@ -2,9 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: demo-app
+  namespace: default
   labels:
     app: demo-app
     app.kubernetes.io/name: demo-app
+    env: dev
 spec:
   replicas: 1
   selector:
@@ -15,10 +17,11 @@ spec:
       labels:
         app: demo-app
         app.kubernetes.io/name: demo-app
+        env: dev
     spec:
       containers:
       - name: demo-app
-        image: ghcr.io/lovius215/demo01:latest
+        image: ghcr.io/lovius215/demo01:dev-latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -30,7 +33,7 @@ spec:
         resources:
           requests:
             cpu: "100m"
-            memory: "256Mi"
+            memory: "128Mi"
           limits:
-            cpu: "500m"
-            memory: "512Mi"
+            cpu: "300m"
+            memory: "256Mi"

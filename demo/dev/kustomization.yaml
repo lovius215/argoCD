@@ -4,12 +4,10 @@ kind: Kustomization
 namespace: default
 
 resources:
-  - ../../base
+  - deployment.yaml
+  - service.yaml
   - configmap.yaml
   - external-secret.yaml
-
-patches:
-  - path: deployment-patch.yaml
 
 images:
   - name: ghcr.io/lovius215/demo01
