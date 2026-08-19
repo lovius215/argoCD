@@ -13,4 +13,4 @@ data:
   SPRING_ZIPKIN_ENDPOINT: "http://zipkin-prod.prod.svc:9411/api/v2/spans"
   SPRING_ZIPKIN_BASE_URL: "http://zipkin-prod.prod.svc:9411"
   LOGGING_LEVEL_COM_EXAMPLE: "INFO"
-  JAVA_OPTS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=Asia/Taipei"
+  JAVA_OPTS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=Asia/Taipei -Dmanagement.zipkin.tracing.endpoint=http://zipkin-prod.prod.svc:9411/api/v2/spans -Dmanagement.zipkin.endpoint=http://zipkin-prod.prod.svc:9411/api/v2/spans -Dspring.zipkin.endpoint=http://zipkin-prod.prod.svc:9411/api/v2/spans"
