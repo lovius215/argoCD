@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: demo-prod
+  name: demo-staging
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,11 +10,13 @@ spec:
   source:
     repoURL: https://github.com/lovius215/argoCD.git
     targetRevision: master
-    path: demo/prod
+    path: demo/staging
   destination:
     server: https://kubernetes.default.svc
-    namespace: prod
+    namespace: staging
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
