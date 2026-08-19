@@ -8,8 +8,9 @@ resources:
 - service.yaml
 - configmap.yaml
 - external-secret.yaml
+- ingress.yaml
 
 images:
 - name: ghcr.io/lovius215/demo01
   newName: ghcr.io/lovius215/demo01
-  newTag: dev-a4c9d4983952e33e06d8a08adeb36a42c9fb421f
+  newTag: dev-a880f011d8da25052d5dc2b044f1c75d0de663f4
