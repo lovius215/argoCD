@@ -13,4 +13,4 @@ resources:
 images:
 - name: ghcr.io/lovius215/demo01
   newName: ghcr.io/lovius215/demo01
-  newTag: dev-f4ee0cd75b7e93bdd0db04bbb4f19bc616030e4e
+  newTag: dev-e4dea8bc883a38dbba748534cd93b9c98603486f
