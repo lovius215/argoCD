@@ -8,8 +8,7 @@ metadata:
     env: dev
 spec:
   rules:
-  - host: demo.local
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
@@ -17,4 +16,4 @@ spec:
           service:
             name: demo-app
             port:
-              number: 8080
+              number: 8090

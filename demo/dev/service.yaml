@@ -11,8 +11,8 @@ spec:
   type: NodePort
   ports:
     - name: http
-      port: 8080
-      targetPort: 8080
+      port: 8090
+      targetPort: 8090
       nodePort: 30088
   selector:
     app: demo-app
