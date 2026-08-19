@@ -17,4 +17,4 @@ spec:
           service:
             name: demo-app
             port:
-              number: 8090
+              number: 8092

@@ -5,6 +5,7 @@ metadata:
   namespace: prod
 data:
   SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_PORT: "8092"
   SPRING_DATA_REDIS_HOST: "redis-prod.prod.svc"
   SPRING_DATA_REDIS_PORT: "6379"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://zipkin-prod.prod.svc:9411/api/v2/spans"

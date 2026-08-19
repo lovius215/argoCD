@@ -8,10 +8,11 @@ metadata:
     app.kubernetes.io/name: demo-app
     env: staging
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - name: http
-      port: 8090
-      targetPort: 8090
+      port: 8091
+      targetPort: 8091
+      nodePort: 30091
   selector:
     app: demo-app

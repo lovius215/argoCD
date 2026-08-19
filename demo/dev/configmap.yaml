@@ -5,6 +5,7 @@ metadata:
   namespace: default
 data:
   SPRING_PROFILES_ACTIVE: "dev"
+  SERVER_PORT: "8090"
   SPRING_DATA_REDIS_HOST: "redis.default.svc"
   SPRING_DATA_REDIS_PORT: "6379"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://zipkin.default.svc:9411/api/v2/spans"

@@ -13,6 +13,6 @@ spec:
     - name: http
       port: 8090
       targetPort: 8090
-      nodePort: 30088
+      nodePort: 30090
   selector:
     app: demo-app

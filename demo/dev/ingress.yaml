@@ -8,7 +8,8 @@ metadata:
     env: dev
 spec:
   rules:
-  - http:
+  - host: dev.demo.local
+    http:
       paths:
       - path: /
         pathType: Prefix

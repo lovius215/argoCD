@@ -5,6 +5,7 @@ metadata:
   namespace: staging
 data:
   SPRING_PROFILES_ACTIVE: "staging"
+  SERVER_PORT: "8091"
   SPRING_DATA_REDIS_HOST: "redis.staging.svc"
   SPRING_DATA_REDIS_PORT: "6379"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://zipkin.staging.svc:9411/api/v2/spans"
