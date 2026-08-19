@@ -4,11 +4,12 @@ kind: Kustomization
 namespace: default
 
 resources:
-  - deployment.yaml
-  - service.yaml
-  - configmap.yaml
-  - external-secret.yaml
+- deployment.yaml
+- service.yaml
+- configmap.yaml
+- external-secret.yaml
 
 images:
-  - name: ghcr.io/lovius215/demo01
-    newTag: dev-latest
+- name: ghcr.io/lovius215/demo01
+  newName: ghcr.io/lovius215/demo01
+  newTag: dev-574bb6ad60c0117b3a25a58537be08baa2e3c0d5
