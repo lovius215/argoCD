@@ -9,3 +9,4 @@ data:
   SPRING_DATA_REDIS_PORT: "6379"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://zipkin.default.svc:9411/api/v2/spans"
   LOGGING_LEVEL_COM_EXAMPLE: "DEBUG"
+  JAVA_OPTS: "-Xms128m -Xmx256m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=Asia/Taipei"
