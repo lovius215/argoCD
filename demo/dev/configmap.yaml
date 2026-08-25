@@ -11,3 +11,4 @@ data:
   MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT: "http://zipkin.default.svc:9411/api/v2/spans"
   LOGGING_LEVEL_COM_EXAMPLE: "DEBUG"
   JAVA_OPTS: "-Xms128m -Xmx256m -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -Duser.timezone=Asia/Taipei -Dmanagement.tracing.export.zipkin.endpoint=http://zipkin.default.svc:9411/api/v2/spans"
+  LOVIUS_VALUE: "123123"
