@@ -1,11 +1,15 @@
-# PowerShell Script: run-root-app-windows.ps1
+﻿# PowerShell Script: run-root-app-windows.ps1
 # Requires PowerShell 5.1+ or PowerShell Core (pwsh)
 
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 $ErrorActionPreference = "Stop"
 
 # 取得腳本所在目錄
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+if (-not $ScriptDir) { $ScriptDir = (Get-Location).Path }
 $RootAppFile = Join-Path $ScriptDir "root-app.yaml"
+$EnvFile = Join-Path $ScriptDir ".env"
 
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "🚀 [Windows PowerShell] 部署 / 執行 Argo CD Root Application (App of Apps)" -ForegroundColor Cyan
@@ -34,16 +38,67 @@ if ($LASTEXITCODE -ne 0) {
     kubectl create namespace argocd
 }
 
-# 4. 檢查 root-app.yaml 檔案
+# 4. 讀取 .env 並配置 Git Repository Secret
+if (Test-Path $EnvFile) {
+    Get-Content $EnvFile | ForEach-Object {
+        $line = $_.Trim()
+        if ($line -and -not $line.StartsWith("#") -and $line.Contains("=")) {
+            $key, $value = $line -split "=", 2
+            $key = $key.Trim()
+            $value = $value.Trim().Trim('"').Trim("'")
+            [System.Environment]::SetEnvironmentVariable($key, $value, "Process")
+        }
+    }
+}
+
+$ghToken = [System.Environment]::GetEnvironmentVariable("GITHUB_TOKEN")
+$ghUser = [System.Environment]::GetEnvironmentVariable("GITHUB_USERNAME")
+$ghRepo = [System.Environment]::GetEnvironmentVariable("GITHUB_REPO_URL")
+
+if (-not $ghUser) { $ghUser = "lovius215" }
+if (-not $ghRepo) { $ghRepo = "https://github.com/lovius215/k8s.git" }
+
+if ($ghToken -and $ghToken -ne "your_github_token_here") {
+    Write-Host ">> 正在從 .env 設定 Argo CD 儲存庫憑證 ($ghRepo)..." -ForegroundColor Yellow
+    $secretYaml = @"
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-k8s-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+type: Opaque
+stringData:
+  type: git
+  url: $ghRepo
+  username: $ghUser
+  password: $ghToken
+"@
+    $secretYaml | kubectl apply -f - | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "✅ Argo CD Git 儲存庫憑證 (github-k8s-repo) 設定完成" -ForegroundColor Green
+    } else {
+        Write-Host "⚠️  Argo CD 儲存庫憑證設定失敗，請確認 kubectl 權限" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "ℹ️  提示: 未在 .env 偵測到有效的 GITHUB_TOKEN。若為私有儲存庫，請在 .env 中填寫 GITHUB_TOKEN" -ForegroundColor DarkGray
+}
+
+# 5. 檢查 root-app.yaml 檔案
 if (-not (Test-Path -Path $RootAppFile)) {
     Write-Host "❌ 錯誤: 找不到 $RootAppFile" -ForegroundColor Red
     exit 1
 }
 
-# 5. 套用 root-app.yaml
+# 6. 套用 root-app.yaml
 Write-Host ""
 Write-Host ">> 套用 $RootAppFile 到 argocd namespace..." -ForegroundColor Yellow
 kubectl apply -f "$RootAppFile"
+
+# 7. 觸發 ArgoCD Application 重新整理
+Write-Host ">> 觸發 ArgoCD Application 重新整理..." -ForegroundColor Yellow
+kubectl annotate applications --all -n argocd argocd.argoproj.io/refresh=hard --overwrite 2>$null | Out-Null
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Green

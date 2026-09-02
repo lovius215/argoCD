@@ -4,6 +4,7 @@ set -eo pipefail
 # 切換至腳本所在目錄
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_APP_FILE="${SCRIPT_DIR}/root-app.yaml"
+ENV_FILE="${SCRIPT_DIR}/.env"
 
 echo "============================================================"
 echo "🚀 [Linux] 部署 / 執行 Argo CD Root Application (App of Apps)"
@@ -30,16 +31,55 @@ if ! kubectl get namespace argocd &> /dev/null; then
   kubectl create namespace argocd
 fi
 
-# 4. 檢查 root-app.yaml 檔案
+# 4. 讀取 .env 並配置 Git Repository Secret
+if [ -f "${ENV_FILE}" ]; then
+  # 載入 .env 變數
+  set -a
+  # 忽略註解與空行
+  # shellcheck disable=SC1090
+  source <(grep -v '^#' "${ENV_FILE}" | sed -e 's/\r$//' | grep -v '^$')
+  set +a
+fi
+
+GITHUB_USERNAME="${GITHUB_USERNAME:-lovius215}"
+GITHUB_REPO_URL="${GITHUB_REPO_URL:-https://github.com/lovius215/k8s.git}"
+
+if [ -n "${GITHUB_TOKEN}" ] && [ "${GITHUB_TOKEN}" != "your_github_token_here" ]; then
+  echo ">> 正在從 .env 設定 Argo CD 儲存庫憑證 (${GITHUB_REPO_URL})..."
+  cat <<EOF | kubectl apply -f - > /dev/null
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-k8s-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+type: Opaque
+stringData:
+  type: git
+  url: ${GITHUB_REPO_URL}
+  username: ${GITHUB_USERNAME}
+  password: ${GITHUB_TOKEN}
+EOF
+  echo "✅ Argo CD Git 儲存庫憑證 (github-k8s-repo) 設定完成"
+else
+  echo "ℹ️  提示: 未在 .env 偵測到有效的 GITHUB_TOKEN。若為私有儲存庫，請在 .env 中填寫 GITHUB_TOKEN"
+fi
+
+# 5. 檢查 root-app.yaml 檔案
 if [ ! -f "${ROOT_APP_FILE}" ]; then
   echo "❌ 錯誤: 找不到 ${ROOT_APP_FILE}"
   exit 1
 fi
 
-# 5. 套用 root-app.yaml
+# 6. 套用 root-app.yaml
 echo ""
 echo ">> 套用 ${ROOT_APP_FILE} 到 argocd namespace..."
 kubectl apply -f "${ROOT_APP_FILE}"
+
+# 7. 觸發 ArgoCD Application 重新整理
+echo ">> 觸發 ArgoCD Application 重新整理..."
+kubectl annotate applications --all -n argocd argocd.argoproj.io/refresh=hard --overwrite 2>/dev/null > /dev/null || true
 
 echo ""
 echo "============================================================"
